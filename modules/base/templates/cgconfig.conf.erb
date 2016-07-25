@@ -1,0 +1,32 @@
+group <%= scope.lookupvar('lxc_user') -%> {  
+  perm {
+    task {
+      uid = <%= scope.lookupvar('lxc_user') -%>;
+      gid = <%= scope.lookupvar('lxc_user') -%>;
+    }
+    admin {
+      uid = <%= scope.lookupvar('lxc_user') -%>;
+      gid = <%= scope.lookupvar('lxc_user') -%>;
+    }
+  }
+
+  # All controllers available in 3.16.0-4
+  # Listed by running: cat /proc/cgroups
+  cpu {}
+  blkio {}
+  cpuacct {}
+  cpuset {
+    cgroup.clone_children = 1;
+    cpuset.mems = 0;
+    cpuset.cpus = 0-<%= @processors.count.to_i-2 -%>;
+  }
+  devices {}
+  freezer {}
+  perf_event {}
+  net_cls {}
+  net_prio {}
+
+  # The memory controller is not enabled by default in Debian Jessie despite being enabled in the kernel
+  # If you enable it add the following
+  memory { memory.use_hierarchy = 1; }
+}

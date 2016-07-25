@@ -1,0 +1,3 @@
+#$lxc_user = me
+#$lxc_uid = 1000
+#$lxc_gid = 1000
