@@ -12,3 +12,7 @@ Ini_setting {
     key_val_separator => '='
 }
 Package { ensure => present }
+Service {
+    ensure => running,
+    enable => true
+}

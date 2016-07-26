@@ -10,7 +10,7 @@ group <%= scope.lookupvar('lxc_user') -%> {
     }
   }
 
-  # All controllers available in 3.16.0-4
+  # All controllers available in 4.6.0-0.bpo.1-amd64
   # Listed by running: cat /proc/cgroups
   cpu {}
   blkio {}
@@ -25,6 +25,7 @@ group <%= scope.lookupvar('lxc_user') -%> {
   perf_event {}
   net_cls {}
   net_prio {}
+  pids {}
 
   # The memory controller is not enabled by default in Debian Jessie despite being enabled in the kernel
   # If you enable it add the following
