@@ -1,3 +1,7 @@
+if (!defined('lxc_user')) { $lxc_user = $myuser }
+if (!defined('lxc_uid')) { $lxc_uid = $myuid }
+if (!defined('lxc_gid')) { $lxc_gid = $mygid }
+
 file {
     [
         "/home/$lxc_user/.config",
@@ -27,23 +31,25 @@ ini_setting {
 	setting => 'kernel.unprivileged_userns_clone',
 	value   => 1;
 }
-$subid_end = $subid_start + 65535
+$subuid_end = $subuid_next + 65535
+$subgid_end = $subgid_next + 65535
+file_line {
+    'uid_map':
+        path => "/home/$lxc_user/.config/lxc/default.conf",
+        line => "lxc.id_map = u 0 $subuid_next 65536";
+    'gid_map':
+        path => "/home/$lxc_user/.config/lxc/default.conf",
+        line => "lxc.id_map = g 0 $subuid_next 65536";
+}
 exec {
     'refresh-sysctl':
         command     => 'sysctl --system',
 	refreshonly => true;
     'set-subuid':
-        command => "usermod --add-subuids $subid_start-$subid_end $lxc_user",
-	unless  => "grep '$lxc_user:$subid_start:65536' /etc/subuid";
+        command => "usermod --add-subuids $subuid_next-$subuid_end $lxc_user",
+	unless  => "grep '$lxc_user:$subuid_next:65536' /etc/subuid";
     'set-subgid':
-        command => "usermod --add-subgids $subid_start-$subid_end $lxc_user",
-	unless  => "grep '$lxc_user:$subid_start:65536' /etc/subgid";
+        command => "usermod --add-subgids $subgid_next-$subgid_end $lxc_user",
+	unless  => "grep '$lxc_user:$subgid_next:65536' /etc/subgid";
 }
-file_line {
-    'uid_map':
-        path => "/home/$lxc_user/.config/lxc/default.conf",
-        line => "lxc.id_map = u 0 $subid_start 65536";
-    'gid_map':
-        path => "/home/$lxc_user/.config/lxc/default.conf",
-        line => "lxc.id_map = g 0 $subid_start 65536";
-}
+

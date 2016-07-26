@@ -6,4 +6,4 @@ if [ "x`grep $myid runme.sh 2>/dev/null`" == "x" ]; then
     exit 1
 fi
 
-sudo /opt/puppetlabs/bin/puppet apply -vt --modulepath=modules . $@
+sudo FACTER_myuser=`whoami` FACTER_myuid=`id -u` FACTER_mygid=`id -g` /opt/puppetlabs/bin/puppet apply -vt --modulepath=modules . $@
